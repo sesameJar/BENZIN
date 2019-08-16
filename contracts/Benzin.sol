@@ -83,7 +83,7 @@ contract Station {
         require(_amount > 0, "DB_err : 0 tip");
         require(videos[_ipfsHash].publisher != address(0) , "Videos does not exist");
         
-        videos[_ipfsHash].tipjar ++;
+        videos[_ipfsHash].tipjar += _amount;
         publishers[_publisher].videos[_ipfsHash].tipjar ++;
         publishers[_publisher].tipjar ++;
     }
@@ -106,7 +106,7 @@ contract Benzin is Station {
        _; 
     }
     
-    function tip(address payable _publisher, string memory _ipfsHash) public payable {
+    function tip(string memory _ipfsHash, address payable _publisher) public payable videoExists(_ipfsHash) {
         require(msg.value > 0, '0-tip err.');
         require(_publisher != address(0), 'invalid address');
         DB_tipMade(msg.value, _ipfsHash, _publisher);
@@ -123,7 +123,7 @@ contract Benzin is Station {
         public
     {
         require(msg.sender == _publisher, 'you must send the video using your own address');
-        require(_size > 0 && _timestamp < now);
+        require(_size > 0, "size err");
         DB_insert(_ipfsHash, _title, _timestamp, _size, 0, 0, _publisher);
         emit newVideo(_ipfsHash, "Video added successfully");
     }
