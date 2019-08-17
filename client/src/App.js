@@ -77,13 +77,40 @@ class App extends Component {
     }
   }
 
+  renderLoader() {
+    return (
+      <div className="loading">
+        <h3> Loading Web3, accounts, and contract...</h3>
+        <p> Unlock your metamask </p>
+      </div>
+    );
+  }
+
   render() {
     if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
+      return this.renderLoader()
     }
     return (
       <div className="App">
-        <NewVideoForm web3={this.state.web3} contract={this.state.contract} accounts={this.state.accounts} />
+        <div className="wrapper">
+          <div className="main">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-5 title-container">
+                  <h1>BENZIN.</h1>
+                </div>
+                <div className="col-md-7 form-container">
+                  <NewVideoForm web3={this.state.web3} accounts={this.state.accounts} contract={this.state.contract} />
+                  <div className="videoList">
+                    <ul>
+                      
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

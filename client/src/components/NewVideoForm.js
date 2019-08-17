@@ -111,8 +111,11 @@ class AddVideoForm extends Component {
      
       return (
         <form onSubmit={this.onSubmit}>
+          <h3>Add a New Video</h3>
+          <p>Your video will be online forever.</p>
           <input type="text" name="title" id="title" placeholder="Video title" onChange={this.captureTitle} />
-          <input type="file" name="file" id="file" onChange={this.captureFile} />
+          <input type="file" name="file" id="file" className="inputFile" onChange={this.captureFile} />
+          <label for="file">Choose a file</label>
           {submitBtn}
         </form>
       )
