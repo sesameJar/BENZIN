@@ -3,6 +3,7 @@ const Benzin = artifacts.require('./Benzin.sol')
 contract('Benzin', accounts => {
     let contract;
     let video;
+    
     beforeEach(async () => {
         contract = await Benzin.new()
         video = {

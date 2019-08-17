@@ -1,52 +1,80 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import BenzinContract from "./contracts/Benzin.json";
 import getWeb3 from "./utils/getWeb3";
-
+// import BenzinFunc from "./contractFunctions"
 import "./App.css";
+// const Benzin = new BenzinFunc()
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  state = { 
+    web3: null,
+    accounts: null,
+    contract: null,
+    videos : [],
+    video : {
+      ipfsHash : 'QmVtYjNij3KeyGmcgg7yVXWskLaBtov3UYL9pgcGK3MCWu',
+      title : 'This is the title',
+      timestamp : 0,
+      size : 0,
+      tipjar : 0,
+      views : 0,
+      publisher : ''
+  }
+  };
 
   componentDidMount = async () => {
+    // await Benzin.initialized()
     try {
-      // Get network provider and web3 instance.
       const web3 = await getWeb3();
-
-      // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      const contract = new web3.eth.Contract(BenzinContract.abi, "0xf1f54f42564592a9067ea4447dafacd913e2f08f")
+      this.setState({ web3, accounts, contract },await this.getVideos);
+      await this.addVideo()
     } catch (error) {
       // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
+      
       console.error(error);
     }
   };
+  
+  getVideos = async () => {
+    const {accounts,contract} = this.state;
+    let videoCounter = await contract.methods.getVideoCounter().call();
+    let videos = []
+    for(let i = 1; i<=videoCounter; i++) {
+      let videoArray = await contract.methods.getVideoByID(i).call()
+      let video = {
+        ipfsHash : videoArray[0],
+        title : videoArray[1],
+        timestamp : videoArray[2],
+        size : videoArray[3],
+        tipjar : videoArray[4],
+        views : videoArray[5],
+        publisher : videoArray[6]
+      }
+      videos.push(video)
+      this.setState({videos})
+    }
+    console.log(videoCounter)
+  }
 
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-    // Update state with the result.
-    this.setState({ storageValue: response });
-  };
+  addVideo = async () => {
+    const {accounts, contract,video} = this.state;
+    video.size = 2
+    video.timestamp = Date.now()
+    video.publisher = accounts[0]
+    try {
+      await contract.methods.addVideo(
+        video.ipfsHash,
+        video.title,
+        video.timestamp,
+        video.size,
+        video.publisher).send({from : accounts[0]})
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
 
   render() {
     if (!this.state.web3) {
@@ -54,17 +82,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        
       </div>
     );
   }

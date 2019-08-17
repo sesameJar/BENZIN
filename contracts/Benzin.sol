@@ -25,9 +25,16 @@ contract Station {
     mapping(address => UserVideoList) public publishers; // listing all videos of each publisher
     
     mapping(string => Video) videos; // IPFS HASH
+    mapping(uint256 => Video) videosList;
+    uint256 public videoCounter;
     
     modifier videoExists(string memory _ipfsHash) {
-        require(videos[_ipfsHash].publisher != address(0) , "Videos does not exist");
+        require(videos[_ipfsHash].size >0 , "Videos does not exist");
+        _;
+    }
+
+    modifier videoNotExists(string memory _ipfsHash) {
+        require(videos[_ipfsHash].size == 0 , "Videos does not exist");
         _;
     }
     
@@ -39,10 +46,12 @@ contract Station {
         uint256 _tipjar,
         uint256 _views,
         address payable _publisher
-    ) public {
+    ) public videoNotExists(_ipfsHash) {
         Video memory video = Video( _ipfsHash, _title, _timestamp, _size, _tipjar, _views, _publisher);
         videos[_ipfsHash] = video;
         //increasing the length of videos
+        videoCounter++;
+        videosList[videoCounter] = video;
         publishers[_publisher].length++;
         publishers[_publisher].videos[_ipfsHash] = video;
     }
@@ -65,6 +74,11 @@ contract Station {
     function DB_get(string memory _ipfsHash) public view videoExists(_ipfsHash) returns(Video memory) 
     {
         Video storage video = videos[_ipfsHash];
+        return video;
+    }
+
+    function DB_get_id(uint256 _id) public view returns(Video memory) {
+        Video storage video = videosList[_id];
         return video;
     }
     
@@ -130,6 +144,14 @@ contract Benzin is Station {
     
     function getVideo(string memory _ipfsHash) public view videoExists(_ipfsHash) returns(Video memory) {
         return DB_get(_ipfsHash);
+    }
+
+    function getVideoByID(uint256 _videoId) public view returns(Video memory) {
+        return DB_get_id(_videoId);
+    }
+
+    function getVideoCounter() public view returns(uint256) {
+        return videoCounter;
     }
     
     // function editVide() {}
