@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import BenzinContract from "./contracts/Benzin.json";
 import getWeb3 from "./utils/getWeb3";
 import NewVideoForm from "./components/NewVideoForm"
+import Video from "./components/Video"
+import { BrowserRouter, Route, Switch,Link } from "react-router-dom";
 
 import "./App.css";
 
@@ -56,7 +58,6 @@ class App extends Component {
       videos.push(video)
       this.setState({videos})
     }
-    console.log(videoCounter)
   }
 
   addVideo = async () => {
@@ -86,7 +87,8 @@ class App extends Component {
     );
   }
 
-  render() {
+  RenderApp=() =>{
+    let videos = this.state.videos
     if (!this.state.web3) {
       return this.renderLoader()
     }
@@ -102,8 +104,19 @@ class App extends Component {
                 <div className="col-md-7 form-container">
                   <NewVideoForm web3={this.state.web3} accounts={this.state.accounts} contract={this.state.contract} />
                   <div className="videoList">
+                    <h3>Videos : </h3>
                     <ul>
-                      
+                      {videos.map(v => {
+                        return (
+                          <li>
+                            <Link to={{
+                              pathname : `video/${v.ipfsHash}`,
+                              video : v,
+                              key : v.ipfsHash
+                            }}>{v.title}</Link>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 </div>
@@ -113,6 +126,17 @@ class App extends Component {
         </div>
       </div>
     );
+  }
+
+  render() {
+    return(
+      <BrowserRouter>
+        <Switch>
+          <Route path="/" exact component={this.RenderApp} />
+          <Route path="/video/:ipfsHash?" component={Video} />
+        </Switch>
+      </BrowserRouter>
+    )
   }
 }
 

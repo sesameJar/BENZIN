@@ -101,14 +101,13 @@ class AddVideoForm extends Component {
          submitBtn = <button>Submit</button>
     }
     else {
-         submitBtn = 'loading'
+         submitBtn = <button disabled>Loading ...</button>
     }
     if (!window.web3) {
       return (
         <div>Metamask is required to post videos and send tips.</div>
       )
     } else {
-     
       return (
         <form onSubmit={this.onSubmit}>
           <h3>Add a New Video</h3>

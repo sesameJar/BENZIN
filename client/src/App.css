@@ -25,6 +25,12 @@ body {
   margin: 0 auto;
 }
 
+.main.videoPlayer {
+  background-image: url('./assets/home_bg.jpg');
+  padding-top: 10px;
+  overflow: scroll
+}
+
 .loading {
   width: 100%;
   display: flex;
@@ -83,6 +89,7 @@ body {
   height: 90vh;
   padding-top: 100px;
   padding-left: 50px;
+  overflow: scroll;
 }
 
 .form-container form h3 {
@@ -195,4 +202,19 @@ input[type="file"] + label:hover {
 
 input[type="file"] + label {
 	cursor: pointer; /* "hand" cursor */
+}
+
+.videoList h3 {
+  color: #cdcdcd;
+  text-decoration: underline;
+}
+
+.videoList li a {
+  color : #cdcdcd;
+
+}
+
+video {
+  max-width: 100%;
+  margin : 0 auto;
 }
