@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import BenzinContract from "./contracts/Benzin.json";
 import getWeb3 from "./utils/getWeb3";
-// import BenzinFunc from "./contractFunctions"
+import NewVideoForm from "./components/NewVideoForm"
+
 import "./App.css";
-// const Benzin = new BenzinFunc()
+
 
 class App extends Component {
   state = { 
@@ -12,8 +13,8 @@ class App extends Component {
     contract: null,
     videos : [],
     video : {
-      ipfsHash : 'QmVtYjNij3KeyGmcgg7yVXWskLaBtov3UYL9pgcGK3MCWu',
-      title : 'This is the title',
+      ipfsHash : '',
+      title : '',
       timestamp : 0,
       size : 0,
       tipjar : 0,
@@ -29,7 +30,7 @@ class App extends Component {
       const accounts = await web3.eth.getAccounts();
       const contract = new web3.eth.Contract(BenzinContract.abi, "0xf1f54f42564592a9067ea4447dafacd913e2f08f")
       this.setState({ web3, accounts, contract },await this.getVideos);
-      await this.addVideo()
+      // await this.addVideo()
     } catch (error) {
       // Catch any errors for any of the above operations.
       
@@ -82,7 +83,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        
+        <NewVideoForm />
       </div>
     );
   }
