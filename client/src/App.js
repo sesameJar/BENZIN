@@ -83,7 +83,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <NewVideoForm />
+        <NewVideoForm web3={this.state.web3} contract={this.state.contract} accounts={this.state.accounts} />
       </div>
     );
   }
